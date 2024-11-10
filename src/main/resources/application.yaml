@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: jmolecules-example
+  jpa:
+    generate-ddl: true
+    show-sql: true
