@@ -10,8 +10,13 @@ repositories {
     mavenCentral()
 }
 
+private val jmoleculesVersion = "0.23.0"
+
 dependencies {
+    implementation("org.jmolecules.integrations:jmolecules-starter-ddd:$jmoleculesVersion")
+
     testImplementation(kotlin("test"))
+    testImplementation("org.jmolecules.integrations:jmolecules-starter-test:$jmoleculesVersion")
 }
 
 tasks.test {
