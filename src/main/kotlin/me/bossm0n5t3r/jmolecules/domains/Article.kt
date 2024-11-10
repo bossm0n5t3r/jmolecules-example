@@ -1,4 +1,4 @@
-package me.bossm0n5t3r.jmolecules
+package me.bossm0n5t3r.jmolecules.domains
 
 import org.jmolecules.ddd.annotation.AggregateRoot
 import org.jmolecules.ddd.annotation.Identity

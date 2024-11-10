@@ -1,4 +1,4 @@
-package me.bossm0n5t3r.jmolecules
+package me.bossm0n5t3r.jmolecules.domains
 
 enum class Status {
     DRAFT,
