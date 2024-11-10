@@ -1,17 +1,23 @@
 package me.bossm0n5t3r.jmolecules.domains
 
-import org.jmolecules.ddd.annotation.Entity
-import org.jmolecules.ddd.annotation.Identity
+import jakarta.persistence.Table
+import org.jmolecules.ddd.types.Entity
+import org.jmolecules.ddd.types.Identifier
 import java.time.LocalDateTime
 import java.util.UUID
 
-@Entity
+@Table(name = "comments")
 class Comment(
-    @Identity
-    val id: String = UUID.randomUUID().toString(),
     val username: Username,
     var message: String,
-) {
+) : Entity<Article, Comment.CommentIdentifier> {
+    data class CommentIdentifier(
+        val id: String,
+    ) : Identifier
+
+    override val id: CommentIdentifier
+        get() = CommentIdentifier(UUID.randomUUID().toString())
+
     var lastModified: LocalDateTime = LocalDateTime.now()
         private set
 
@@ -22,14 +28,5 @@ class Comment(
     fun edit(newMessage: String) {
         message = newMessage
         lastModified = LocalDateTime.now()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-
-        other as Comment
-
-        return id == other.id
     }
 }
