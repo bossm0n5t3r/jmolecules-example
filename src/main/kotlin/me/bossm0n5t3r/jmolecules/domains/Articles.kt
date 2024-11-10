@@ -7,8 +7,8 @@ class Articles {
     private val articles: MutableMap<Slug, Article> = mutableMapOf()
 
     fun save(article: Article): Slug {
-        articles[article.slug] = article
-        return article.slug
+        articles[article.id] = article
+        return article.id
     }
 
     fun findBySlug(slug: Slug): Article? = articles[slug]

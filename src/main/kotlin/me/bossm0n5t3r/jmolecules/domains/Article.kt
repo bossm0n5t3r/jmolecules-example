@@ -1,17 +1,18 @@
 package me.bossm0n5t3r.jmolecules.domains
 
-import org.jmolecules.ddd.annotation.AggregateRoot
-import org.jmolecules.ddd.annotation.Identity
+import jakarta.persistence.Table
+import org.jmolecules.ddd.types.AggregateRoot
 
-@AggregateRoot
+@Table(name = "articles")
 class Article(
-    @Identity
-    val slug: Slug,
     val author: Username,
     var title: String,
     var content: String,
     var status: Status = Status.DRAFT,
-) {
+) : AggregateRoot<Article, Slug> {
+    override val id: Slug
+        get() = title.toSlug()
+
     val comments: MutableList<Comment> = mutableListOf()
     val likedBy: MutableSet<Username> = mutableSetOf()
 
@@ -51,12 +52,5 @@ class Article(
 
     fun dislike(user: Username) {
         likedBy.remove(user)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
-        val article = other as Article
-        return slug == article.slug
     }
 }
