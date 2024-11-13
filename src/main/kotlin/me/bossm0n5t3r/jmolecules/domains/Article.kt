@@ -1,5 +1,6 @@
 package me.bossm0n5t3r.jmolecules.domains
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -21,15 +22,15 @@ class Article(
 ) : AggregateRoot<Article, Article.ArticleIdentifier> {
     @JvmInline
     value class ArticleIdentifier(
-        val id: UUID,
+        val id: String,
     ) : Identifier
 
     @Id
-    override val id: ArticleIdentifier = ArticleIdentifier(UUID.randomUUID())
+    override val id: ArticleIdentifier = ArticleIdentifier(UUID.randomUUID().toString())
 
     val slug = title.toSlug()
 
-    @OneToMany(mappedBy = "articleIdentifier")
+    @OneToMany(mappedBy = "articleIdentifier", cascade = [CascadeType.ALL])
     val comments: MutableList<Comment> = mutableListOf()
 
     var likedBy = ""
@@ -42,8 +43,20 @@ class Article(
     fun comment(
         user: Username,
         message: String,
-    ) {
-        comments.add(Comment(articleIdentifier = this.id, username = user, message = message))
+    ): Comment = Comment(articleIdentifier = this.id, username = user, message = message).apply { comments.add(this) }
+
+    fun updateComment(
+        commentId: Comment.CommentIdentifier,
+        message: String,
+    ): Comment {
+        val comment = comments.find { it.id == commentId } ?: error("Comment not found")
+        comment.edit(message)
+        return comment
+    }
+
+    fun deleteComment(commentId: Comment.CommentIdentifier) {
+        val comment = comments.find { it.id == commentId } ?: error("Comment not found")
+        comments.remove(comment)
     }
 
     fun publish() {
