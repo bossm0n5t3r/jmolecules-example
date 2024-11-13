@@ -1,0 +1,26 @@
+### Create Article
+
+POST http://localhost:8080/articles
+Content-Type: application/json
+
+{
+  "author": "John Doe",
+  "title": "My first article",
+  "content": "This is my first article"
+}
+
+### Get Article By Slug
+
+GET http://localhost:8080/articles/my-first-article
+
+### Get Articles
+
+GET http://localhost:8080/articles
+
+### Filter Articles By Status
+
+GET http://localhost:8080/articles/status/DRAFT
+
+### Delete Article
+
+DELETE http://localhost:8080/articles/my-first-article
