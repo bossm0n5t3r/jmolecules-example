@@ -3,7 +3,8 @@ package me.bossm0n5t3r.jmolecules.domains
 import org.jmolecules.ddd.types.Identifier
 import org.jmolecules.ddd.types.ValueObject
 
-data class Slug(
+@JvmInline
+value class Slug(
     val value: String,
 ) : ValueObject,
     Identifier {
