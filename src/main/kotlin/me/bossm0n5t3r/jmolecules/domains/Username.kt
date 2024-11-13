@@ -12,3 +12,5 @@ value class Username(
         require(value.isNotBlank()) { "Username value cannot be null or blank." }
     }
 }
+
+fun String.toUsername(): Username = Username(this)
