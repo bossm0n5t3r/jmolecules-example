@@ -1,20 +1,38 @@
 package me.bossm0n5t3r.jmolecules.domains
 
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.jmolecules.ddd.types.AggregateRoot
+import org.jmolecules.ddd.types.Identifier
+import java.util.UUID
 
+@Entity
 @Table(name = "articles")
 class Article(
     val author: Username,
     var title: String,
     var content: String,
+    @Enumerated(EnumType.STRING)
     var status: Status = Status.DRAFT,
-) : AggregateRoot<Article, Slug> {
-    override val id: Slug
-        get() = title.toSlug()
+) : AggregateRoot<Article, Article.ArticleIdentifier> {
+    @JvmInline
+    value class ArticleIdentifier(
+        val id: UUID,
+    ) : Identifier
 
+    @Id
+    override val id: ArticleIdentifier = ArticleIdentifier(UUID.randomUUID())
+
+    val slug = title.toSlug()
+
+    @OneToMany(mappedBy = "articleIdentifier")
     val comments: MutableList<Comment> = mutableListOf()
-    val likedBy: MutableSet<Username> = mutableSetOf()
+
+    var likedBy = ""
 
     init {
         require(title.isNotBlank()) { "title cannot be blank" }
@@ -25,7 +43,7 @@ class Article(
         user: Username,
         message: String,
     ) {
-        comments.add(Comment(username = user, message = message))
+        comments.add(Comment(articleIdentifier = this.id, username = user, message = message))
     }
 
     fun publish() {
@@ -47,10 +65,23 @@ class Article(
     }
 
     fun like(user: Username) {
-        likedBy.add(user)
+        likedBy = "$likedBy,${user.value}"
     }
 
     fun dislike(user: Username) {
-        likedBy.remove(user)
+        val users = likedBy.split(",")
+        likedBy = users.filter { it != user.value }.joinToString(",")
     }
+
+    fun toMap(): Map<String, Any> =
+        mapOf(
+            "id" to id.id,
+            "author" to author.value,
+            "title" to title,
+            "content" to content,
+            "status" to status,
+            "slug" to slug,
+            "comments" to comments.map { it.toMap() },
+            "likedBy" to likedBy,
+        )
 }
