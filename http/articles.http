@@ -9,7 +9,12 @@ Content-Type: application/json
   "content": "This is my first article"
 }
 
-### Get Article By Slug
+> {%
+    const articleId = response.body.id;
+    client.global.set("articleId", articleId)
+%}
+
+### Get Articles By Slug
 
 GET http://localhost:8080/articles/my-first-article
 
@@ -23,4 +28,36 @@ GET http://localhost:8080/articles/status/DRAFT
 
 ### Delete Article
 
-DELETE http://localhost:8080/articles/my-first-article
+DELETE http://localhost:8080/articles/{{articleId}}
+
+### Get Comments By Article Id
+
+GET http://localhost:8080/articles/{{articleId}}/comments
+
+### Create Comment
+
+POST http://localhost:8080/articles/{{articleId}}/comments
+Content-Type: application/json
+
+{
+  "author": "Alice",
+  "message": "This is my first comment"
+}
+
+> {%
+    const commentId = response.body.id;
+    client.global.set("commentId", commentId)
+%}
+
+### Edit Comment
+
+PUT http://localhost:8080/articles/{{articleId}}/comments/{{commentId}}
+Content-Type: application/json
+
+{
+  "message": "This is my second comment"
+}
+
+### Delete Comment
+
+DELETE http://localhost:8080/articles/{{articleId}}/comments/{{commentId}}
