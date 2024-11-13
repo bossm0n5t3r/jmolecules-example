@@ -10,5 +10,7 @@ interface ArticleRepository :
     AssociationResolver<Article, Article.ArticleIdentifier> {
     fun findAllByStatus(status: Status): List<Article>
 
-    fun findBySlug(slug: Slug): Article?
+    fun findAllBySlug(slug: Slug): List<Article>
+
+    fun findById(id: String): Article?
 }
